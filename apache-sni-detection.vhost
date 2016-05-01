@@ -1,0 +1,22 @@
+<IfModule mod_rewrite.c>
+	RewriteEngine on
+	RewriteBase /
+
+
+	#
+	# HTTPS-REDIRECT
+	# if SNI-Supported
+	#
+	RewriteCond %{QUERY_STRING} !nossl=1
+	RewriteCond %{HTTPS} off
+	RewriteCond %{HTTP:X-Forwarded-Proto} !https
+
+	# Exclude Non-Supported (Non-SNI) Browsers
+	RewriteCond %{SSL:SSL_TLS_SNI} !=""<--->[OR]
+	RewriteCond %{HTTP_USER_AGENT} !Windows\ NT\ 5
+	RewriteCond %{HTTP_USER_AGENT} !MSIE\ [1-8]<--->[OR]
+	RewriteCond %{HTTP_USER_AGENT} !Android.*(Mobile)?\ 2\.[0-2]+
+	# Check if iOS/Safari/iPad/iPhone need to be added too?!
+
+	RewriteRule . https://%{SERVER_NAME}%{REQUEST_URI} [L,R=301]
+</IfModule>
