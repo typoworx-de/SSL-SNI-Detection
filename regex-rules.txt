@@ -1,0 +1,16 @@
+#
+# HTTPS-REDIRECT
+# if SNI-Supported by generic RegExp patterns
+#
+
+# Check if SSL-Redirect makes sense
+%{QUERY_STRING} !nossl=1
+%{HTTPS} off
+%{HTTP:X-Forwarded-Proto} !https
+
+# Check for non-supported (Non-SNI) browsers by UserAgent-String
+%{SSL:SSL_TLS_SNI} !=""<--->[OR]
+%{HTTP_USER_AGENT} !Windows\ NT\ 5
+%{HTTP_USER_AGENT} !MSIE\ [1-8]<--->[OR]
+%{HTTP_USER_AGENT} !Android.*(Mobile)?\ 2\.[0-2]+
+# Check if iOS/Safari/iPad/iPhone need to be added too?!
